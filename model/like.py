@@ -23,17 +23,11 @@ class LikeModel(db.Model):
         db.session.commit()
 
     @classmethod
-    def find_by_user(cls, user):
-        return cls.query.filter_by(user=user).all()
-
-    @classmethod
-    def find_by_blog(cls, blog):
-        return cls.query.filter_by(blog=blog).all()
-
-    @classmethod
-    def find_by_user_blog(cls, user, blog):
-        return cls.query.filter_by(user=user, blog=blog).first()
-
-    @classmethod
-    def find_all(cls):
+    def find_by(cls, user=None, blog=None):
+        if user and blog:
+            return cls.query.filter_by(user=user, blog=blog).first()
+        if user:
+            return cls.query.filter_by(user=user).all()
+        if blog:
+            return cls.query.filter_by(blog=blog).all()
         return cls.query.all()
