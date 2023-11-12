@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from db import db
-from resource.user import UsersResource, AuthResource
+from resource.user import UsersResource, UserResource, AuthResource
 
 app = Flask(__name__)
 
@@ -24,6 +24,7 @@ def index():
     return '<h1>This is running...</h1>'
 
 api.add_resource(UsersResource, '/users')
+api.add_resource(UserResource, '/user/<string:username>')
 api.add_resource(AuthResource, '/login')
 
 if __name__ == '__main__':
