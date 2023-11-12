@@ -1,0 +1,419 @@
+{
+	"info": {
+		"_postman_id": "611a2e30-447a-4179-9b00-00db041f1f43",
+		"name": "Blog",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "/users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/users",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/users",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/login",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/user/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"user",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/admin",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"123\",\r\n    \"image\": \"na\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/user/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"user",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/user/admin",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/user/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"user",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Follow",
+			"item": [
+				{
+					"name": "/follows",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/follows",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"follows"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/follow/admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/follow/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"follow",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/follow/admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"hari\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/follow/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"follow",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/follow/admin",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"hari\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/follow/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"follow",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "/blogs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/blogs",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/blogs",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"admin post+\",\r\n    \"content\": \"admin test blog content here\",\r\n    \"username\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/blogs",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/blog_for/admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/blog_for/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blog_for",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/blog/1",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/blog/1",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blog",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/blog/1",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"title change\",\r\n    \"content\": \"admin test blog content here\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/blog/1",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blog",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/blog/1",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/blog/1",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"blog",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Likes",
+			"item": [
+				{
+					"name": "/like/admin",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/like/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"like",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/like/admin",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"blog_id\": \"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{server}}/like/admin",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"like",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
