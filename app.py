@@ -3,6 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from db import db
 from resource.user import UsersResource, UserResource, AuthResource
+from resource.follow import FollowsResource, FollowResource
 
 app = Flask(__name__)
 
@@ -26,6 +27,8 @@ def index():
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserResource, '/user/<string:username>')
 api.add_resource(AuthResource, '/login')
+api.add_resource(FollowsResource, '/follows')
+api.add_resource(FollowResource, '/follow/<string:username>')
 
 if __name__ == '__main__':
     app.run(debug=True)
