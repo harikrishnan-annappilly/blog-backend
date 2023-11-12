@@ -32,7 +32,7 @@ api.add_resource(FollowsResource, '/follows')
 api.add_resource(FollowResource, '/follow/<string:username>')
 api.add_resource(BlogsResource, '/blogs')
 api.add_resource(BlogResource, '/blog/<int:blog_id>')
-api.add_resource(BlogUserResource, '/blog_by/<string:username>')
+api.add_resource(BlogUserResource, '/blog_for/<string:username>')
 
 if __name__ == '__main__':
     app.run(debug=True)

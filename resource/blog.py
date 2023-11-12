@@ -7,14 +7,15 @@ class BlogsResource(Resource):
     def get(self):
         return [blog.json() for blog in BlogModel.find_all()]
 
-class BlogUserResource(Resource):
-    def post(self, username):
+    def post(self):
         _parser = reqparse.RequestParser()
         _parser.add_argument('title', type=str, required=True)
         _parser.add_argument('content', type=str, required=True)
+        _parser.add_argument('username', type=str, required=True)
         payload = _parser.parse_args()
         title = payload.get('title')
         content = payload.get('content')
+        username = payload.get('username')
         user = UserModel.find_by_userid(username)
         post_time = datetime.now()
         if BlogModel.find_by_title(title):
@@ -27,12 +28,13 @@ class BlogUserResource(Resource):
         )
         blog.save()
         return blog.json()
-    
+
+class BlogUserResource(Resource):
     def get(self, username):
         user = UserModel.find_by_username(username=username)
         if user is None:
             return {'message': f'user not found {username}'}, 400
-        return [blog.json() for blog in BlogModel.find_by_user(user)]
+        return [blog.json() for blog in BlogModel.get_blogs_for_user(user)]
 
 class BlogResource(Resource):
     def get(self, blog_id):
@@ -49,8 +51,10 @@ class BlogResource(Resource):
         _parse.add_argument('title', type=str, required=True)
         _parse.add_argument('content', type=str, required=True)
         payload = _parse.parse_args()
-        blog.title = payload.get('title')
-        blog.content = payload.get('content')
+        title = payload.get('title')
+        content = payload.get('content')
+        blog.title = title
+        blog.content = content
         blog.save()
         return blog.json()
 

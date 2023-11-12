@@ -40,3 +40,9 @@ class BlogModel(db.Model):
     @classmethod
     def find_all(cls):
         return cls.query.all()
+
+    @classmethod
+    def get_blogs_for_user(cls, user):
+        follows = [follow.followed.username for follow in user.follows]
+        follows.append(user.username)
+        return cls.query.filter(cls.post_by_id.in_(follows)).all()
