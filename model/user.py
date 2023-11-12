@@ -7,6 +7,7 @@ class UserModel(db.Model):
     follows = db.relationship('FollowModel', foreign_keys='FollowModel.follower_id', backref='follower', lazy='dynamic', cascade="all, delete-orphan")
     followers = db.relationship('FollowModel', foreign_keys='FollowModel.followed_id', backref='followed', lazy='dynamic', cascade="all, delete-orphan")
     blogs = db.relationship('BlogModel', backref='post_by', lazy='dynamic', cascade="all, delete-orphan")
+    likes = db.relationship('LikeModel', backref='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def json(self):
         return {
