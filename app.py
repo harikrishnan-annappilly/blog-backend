@@ -4,6 +4,7 @@ from flask_restful import Api
 from db import db
 from resource.user import UsersResource, UserResource, AuthResource
 from resource.follow import FollowsResource, FollowResource
+from resource.blog import BlogsResource, BlogUserResource, BlogResource
 
 app = Flask(__name__)
 
@@ -29,6 +30,9 @@ api.add_resource(UserResource, '/user/<string:username>')
 api.add_resource(AuthResource, '/login')
 api.add_resource(FollowsResource, '/follows')
 api.add_resource(FollowResource, '/follow/<string:username>')
+api.add_resource(BlogsResource, '/blogs')
+api.add_resource(BlogResource, '/blog/<int:blog_id>')
+api.add_resource(BlogUserResource, '/blog_by/<string:username>')
 
 if __name__ == '__main__':
     app.run(debug=True)

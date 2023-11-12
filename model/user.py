@@ -6,6 +6,7 @@ class UserModel(db.Model):
     image = db.Column(db.String, default='NA')
     follows = db.relationship('FollowModel', foreign_keys='FollowModel.follower_id', backref='follower', lazy='dynamic', cascade="all, delete-orphan")
     followers = db.relationship('FollowModel', foreign_keys='FollowModel.followed_id', backref='followed', lazy='dynamic', cascade="all, delete-orphan")
+    blogs = db.relationship('BlogModel', backref='post_by', lazy='dynamic', cascade="all, delete-orphan")
 
     def json(self):
         return {
@@ -14,6 +15,7 @@ class UserModel(db.Model):
             'image': self.image,
             # 'follows': [f.followed.username for f in self.follows],
             # 'followers': [f.follower.username for f in self.followers],
+            # 'blogs': [blog.json() for blog in self.blogs]
         }
 
     def save(self):
