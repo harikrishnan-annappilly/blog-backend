@@ -6,7 +6,7 @@ from model.user import UserModel
 
 class LikesResource(Resource):
     def get(self):
-        return [like.json() for like in LikeModel.find_by()]
+        return [like.json() for like in LikeModel.find_all()]
 
 
 class LikeResource(Resource):
@@ -15,13 +15,15 @@ class LikeResource(Resource):
         _parser.add_argument('blog_id', type=str, required=True)
         payload = _parser.parse_args()
         blog_id = payload.get('blog_id')
-        blog = BlogModel.find_by_id(blog_id)
+
+        blog = BlogModel.find_one(id=blog_id)
         user = UserModel.find_one(username=username)
-        like = LikeModel.find_by(user=user, blog=blog)
         if blog is None:
             return {'message': f'blog with id {blog_id} not found'}, 404
         if user is None:
             return {'message': f'user with username {username} not found'}, 404
+
+        like = LikeModel.find_one(user=user, blog=blog)
         if like:
             like.liked = not like.liked
         else:
@@ -33,4 +35,4 @@ class LikeResource(Resource):
         user = UserModel.find_one(username=username)
         if user is None:
             return {'message': f'user with username {username} not found'}, 404
-        return [like.id for like in LikeModel.find_by(user) if like.liked]
+        return [like.id for like in LikeModel.find_all(user=user) if like.liked]
