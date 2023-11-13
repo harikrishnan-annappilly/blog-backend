@@ -5,12 +5,6 @@ from model.user import UserModel
 
 class FollowsResource(Resource):
     def get(self):
-        response = {}
-        for follow in FollowModel.find_all():
-            if response.get(follow.follower.username):
-                response[follow.follower.username].append(follow.followed.username)
-            else:
-                response[follow.follower.username] = [follow.followed.username]
         return [follow.json() for follow in FollowModel.find_all()]
 
 
@@ -22,7 +16,7 @@ class FollowResource(Resource):
         user = UserModel.find_one(username=username)
         if user is None:
             return {'message': f'username {username} not found'}, 404
-        return [follow.followed.username for follow in FollowModel.find_by_follower(user)]
+        return [follow.followed.username for follow in FollowModel.find_all(follower=user)]
 
     def post(self, username):
         payload = self._parser.parse_args()
@@ -35,7 +29,7 @@ class FollowResource(Resource):
             return {'message': f'user {followed_username} not found'}, 404
         if followed.username == follower.username:
             return {'message': f'both follower and followed is same user'}, 400
-        if FollowModel.find_by_follower_an_followed(follower=follower, followed=followed):
+        if FollowModel.find_one(follower=follower, followed=followed):
             return {'message': f'already followed'}, 400
         follow = FollowModel(follower=follower, followed=followed)
         follow.save()
@@ -52,7 +46,7 @@ class FollowResource(Resource):
             return {'message': f'user {followed_username} not found'}, 404
         if followed.username == follower.username:
             return {'message': f'both follower and followed is same user'}, 400
-        follow = FollowModel.find_by_follower_an_followed(follower=follower, followed=followed)
+        follow = FollowModel.find_one(follower=follower, followed=followed)
         if follow is None:
             return {'message': f'no entry for this'}, 400
         response = follow.json()
