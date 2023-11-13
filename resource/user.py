@@ -1,6 +1,8 @@
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from model.user import UserModel
+
+SUPER_USER = ['admin']
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username', required=True, type=str)
@@ -21,6 +23,7 @@ class UsersResource(Resource):
         user.save()
         return user.json()
 
+    @jwt_required()
     def get(self):
         return [user.json() for user in UserModel.find_all()]
 
@@ -33,7 +36,10 @@ class UserResource(Resource):
             }, 404
         return user.json()
 
+    @jwt_required()
     def delete(self, username):
+        if get_jwt_identity() not in SUPER_USER:
+            return {'message': f'you are not authorized perform this operation'}, 403
         user = UserModel.find_by_username(username)
         if user is None:
             return {
