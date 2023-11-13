@@ -3,6 +3,7 @@ from datetime import datetime
 from model.blog import BlogModel
 from model.user import UserModel
 
+
 class BlogsResource(Resource):
     def get(self):
         return [blog.json() for blog in BlogModel.find_all()]
@@ -16,35 +17,24 @@ class BlogsResource(Resource):
         title = payload.get('title')
         content = payload.get('content')
         username = payload.get('username')
-        user = UserModel.find_by_userid(username)
+        user = UserModel.find_one(username=username)
         post_time = datetime.now()
         if BlogModel.find_by_title(title):
             return {'message': f'similar title exist', 'title': title}, 400
-        blog = BlogModel(
-            title=title,
-            content=content,
-            post_time=post_time,
-            post_by=user
-        )
+        blog = BlogModel(title=title, content=content, post_time=post_time, post_by=user)
         blog.save()
         return blog.json()
 
-class BlogUserResource(Resource):
-    def get(self, username):
-        user = UserModel.find_by_username(username=username)
-        if user is None:
-            return {'message': f'user not found {username}'}, 400
-        return [blog.json() for blog in BlogModel.get_blogs_for_user(user)]
 
 class BlogResource(Resource):
     def get(self, blog_id):
-        blog = BlogModel.find_by_id(blog_id)
+        blog = BlogModel.find_one(id=blog_id)
         if blog is None:
             return {'message': f'no blog with id {blog_id}'}, 404
         return blog.json()
 
     def put(self, blog_id):
-        blog = BlogModel.find_by_id(blog_id)
+        blog = BlogModel.find_one(id=blog_id)
         if blog is None:
             return {'message': f'no blog with id {blog_id}'}, 404
         _parse = reqparse.RequestParser()
@@ -59,7 +49,7 @@ class BlogResource(Resource):
         return blog.json()
 
     def delete(self, blog_id):
-        blog = BlogModel.find_by_id(blog_id)
+        blog = BlogModel.find_one(id=blog_id)
         if blog is None:
             return {'message': f'no blog with id {blog_id}'}, 404
         response = blog.json()

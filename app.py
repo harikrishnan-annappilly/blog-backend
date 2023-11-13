@@ -4,7 +4,7 @@ from flask_restful import Api
 from db import db
 from resource.user import UsersResource, UserResource, AuthResource
 from resource.follow import FollowsResource, FollowResource
-from resource.blog import BlogsResource, BlogUserResource, BlogResource
+from resource.blog import BlogsResource, BlogResource
 from resource.like import LikeResource, LikesResource
 
 app = Flask(__name__)
@@ -18,13 +18,16 @@ db.init_app(app)
 api = Api(app)
 jwt = JWTManager(app)
 
+
 @app.before_request
 def create_tables():
     db.create_all()
 
+
 @app.route('/')
 def index():
     return '<h1>This is running...</h1>'
+
 
 api.add_resource(UsersResource, '/users')
 api.add_resource(UserResource, '/user/<string:username>')
@@ -33,7 +36,6 @@ api.add_resource(FollowsResource, '/follows')
 api.add_resource(FollowResource, '/follow/<string:username>')
 api.add_resource(BlogsResource, '/blogs')
 api.add_resource(BlogResource, '/blog/<int:blog_id>')
-api.add_resource(BlogUserResource, '/blog_for/<string:username>')
 api.add_resource(LikesResource, '/likes')
 api.add_resource(LikeResource, '/like/<string:username>')
 

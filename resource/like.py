@@ -3,9 +3,11 @@ from model.like import LikeModel
 from model.blog import BlogModel
 from model.user import UserModel
 
+
 class LikesResource(Resource):
     def get(self):
         return [like.json() for like in LikeModel.find_by()]
+
 
 class LikeResource(Resource):
     def put(self, username):
@@ -14,7 +16,7 @@ class LikeResource(Resource):
         payload = _parser.parse_args()
         blog_id = payload.get('blog_id')
         blog = BlogModel.find_by_id(blog_id)
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_one(username=username)
         like = LikeModel.find_by(user=user, blog=blog)
         if blog is None:
             return {'message': f'blog with id {blog_id} not found'}, 404
@@ -26,9 +28,9 @@ class LikeResource(Resource):
             like = LikeModel(user=user, blog=blog, liked=True)
         like.save()
         return like.json()
-    
+
     def get(self, username):
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_one(username=username)
         if user is None:
             return {'message': f'user with username {username} not found'}, 404
         return [like.id for like in LikeModel.find_by(user) if like.liked]
