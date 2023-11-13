@@ -31,4 +31,4 @@ class LikeResource(Resource):
         user = UserModel.find_by_username(username)
         if user is None:
             return {'message': f'user with username {username} not found'}, 404
-        return [like.json() for like in LikeModel.find_by(user)]
+        return [like.id for like in LikeModel.find_by(user) if like.liked]
