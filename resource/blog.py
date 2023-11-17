@@ -1,7 +1,8 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
-from model.blog import BlogModel, blog_exist
-from model.user import UserModel, user_exist
+from model.blog import BlogModel
+from model.user import UserModel
+from utils.wrappers import user_exist, blog_exist
 
 
 class BlogsResource(Resource):

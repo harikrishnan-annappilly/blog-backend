@@ -1,5 +1,3 @@
-import functools
-from flask import request
 from db import db
 from .base import BaseModel
 
@@ -35,20 +33,3 @@ class UserModel(BaseModel):
             # 'followers': [f.follower.username for f in self.followers],
             # 'blogs': [blog.json() for blog in self.blogs]
         }
-
-
-def user_exist(func):
-    @functools.wraps(func)
-    def validation(*args, **kwargs):
-        usernames = []
-        if kwargs.get('username'):
-            usernames.append(kwargs.get('username'))
-        if request.is_json and request.json.get('username'):
-            usernames.append(request.json.get('username'))
-        for username in usernames:
-            user = UserModel.find_one(username=username)
-            if user is None:
-                return {'message': f'user not found', 'username': username}, 404
-        return func(*args, **kwargs)
-
-    return validation

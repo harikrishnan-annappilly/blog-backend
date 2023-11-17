@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from model.follow import FollowModel
-from model.user import UserModel, user_exist
+from model.user import UserModel
+from utils.wrappers import user_exist
 
 
 class FollowsResource(Resource):
