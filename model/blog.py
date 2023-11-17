@@ -1,4 +1,5 @@
 from datetime import datetime
+import functools
 from db import db
 from .base import BaseModel
 
@@ -22,3 +23,15 @@ class BlogModel(BaseModel):
     @classmethod
     def find_by_title(cls, title):
         return cls.query.filter(cls.title.ilike(title)).first()
+
+
+def blog_exist(func):
+    @functools.wraps(func)
+    def validation(*args, **kwargs):
+        blog_id = kwargs.get('blog_id')
+        blog = BlogModel.find_one(id=blog_id)
+        if blog is None:
+            return {'message': 'blog not found', 'blog_id': blog_id}, 404
+        return func(*args, **kwargs)
+
+    return validation

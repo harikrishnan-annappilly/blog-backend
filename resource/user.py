@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from model.user import UserModel
+from model.user import UserModel, user_exist
 
 SUPER_USER = ['admin']
 
@@ -28,27 +28,24 @@ class UsersResource(Resource):
 
 
 class UserResource(Resource):
+    @user_exist
     def get(self, username):
         user = UserModel.find_one(username=username)
-        if user is None:
-            return {'message': f'user {username} not found'}, 404
         return user.json()
 
     @jwt_required()
+    @user_exist
     def delete(self, username):
         if get_jwt_identity() not in SUPER_USER:
             return {'message': f'you are not authorized perform this operation'}, 403
         user = UserModel.find_one(username=username)
-        if user is None:
-            return {'message': f'user {username} not found'}, 404
         response = {'message': f'user {username} deleted', 'user': user.json()}
         user.delete()
         return response
 
+    @user_exist
     def put(self, username):
         user = UserModel.find_one(username=username)
-        if user is None:
-            return {'message': f'user {username} not found'}, 404
         parser = reqparse.RequestParser()
         parser.add_argument('password', type=str)
         parser.add_argument('image', type=str)
@@ -62,13 +59,12 @@ class UserResource(Resource):
 
 
 class AuthResource(Resource):
+    @user_exist
     def post(self):
         payload = _user_parser.parse_args()
         username = payload.get('username')
         password = payload.get('password')
         user = UserModel.find_one(username=username)
-        if not user:
-            return {'message': f'user {username} not found'}, 404
         if user.password != password:
             return {'message': f'invalid password'}, 401
         access_token = create_access_token(identity=user.username, additional_claims=user.json())

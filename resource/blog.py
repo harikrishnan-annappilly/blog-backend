@@ -1,13 +1,14 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
-from model.blog import BlogModel
-from model.user import UserModel
+from model.blog import BlogModel, blog_exist
+from model.user import UserModel, user_exist
 
 
 class BlogsResource(Resource):
     def get(self):
         return [blog.json() for blog in BlogModel.find_all()]
 
+    @user_exist
     def post(self):
         _parser = reqparse.RequestParser()
         _parser.add_argument('title', type=str, required=True)
@@ -27,16 +28,14 @@ class BlogsResource(Resource):
 
 
 class BlogResource(Resource):
+    @blog_exist
     def get(self, blog_id):
         blog = BlogModel.find_one(id=blog_id)
-        if blog is None:
-            return {'message': f'no blog with id {blog_id}'}, 404
         return blog.json()
 
+    @blog_exist
     def put(self, blog_id):
         blog = BlogModel.find_one(id=blog_id)
-        if blog is None:
-            return {'message': f'no blog with id {blog_id}'}, 404
         _parse = reqparse.RequestParser()
         _parse.add_argument('title', type=str, required=True)
         _parse.add_argument('content', type=str, required=True)
@@ -48,10 +47,9 @@ class BlogResource(Resource):
         blog.save()
         return blog.json()
 
+    @blog_exist
     def delete(self, blog_id):
         blog = BlogModel.find_one(id=blog_id)
-        if blog is None:
-            return {'message': f'no blog with id {blog_id}'}, 404
         response = blog.json()
         blog.delete()
         return {'message': f'blog deleted', 'object': response}
