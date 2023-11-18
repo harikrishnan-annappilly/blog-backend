@@ -39,6 +39,6 @@ class LikeResource(Resource):
         @get_one_or_404(UserModel, username=get_jwt_identity())
         def decorate(*args):
             (user,) = args
-            return [like.id for like in LikeModel.find_all(user=user) if like.liked]
+            return [like.blog_id for like in LikeModel.find_all(user=user) if like.liked]
 
         return decorate()

@@ -50,6 +50,8 @@ class BlogResource(Resource):
         payload = _parse.parse_args()
         title = payload.get('title')
         content = payload.get('content')
+        if BlogModel.find_by_title(title):
+            return {'message': f'similar title exist', 'title': title}, 400
 
         @get_one_or_404(BlogModel, id=blog_id)
         @get_one_or_404(UserModel, username=get_jwt_identity())
