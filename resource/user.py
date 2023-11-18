@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from model.user import UserModel
-from utils.wrappers import user_exist
+from utils.wrappers import get_one_or_404
 
 SUPER_USER = ['admin']
 
@@ -29,44 +29,59 @@ class UsersResource(Resource):
 
 
 class UserResource(Resource):
-    @user_exist
     def get(self, username):
-        user = UserModel.find_one(username=username)
-        return user.json()
+        @get_one_or_404(UserModel, username=username)
+        def decorate(*args):
+            (user,) = args
+            return user.json()
+
+        return decorate()
 
     @jwt_required()
-    @user_exist
     def delete(self, username):
         if get_jwt_identity() not in SUPER_USER:
             return {'message': f'you are not authorized perform this operation'}, 403
-        user = UserModel.find_one(username=username)
-        response = {'message': f'user {username} deleted', 'user': user.json()}
-        user.delete()
-        return response
 
-    @user_exist
+        @get_one_or_404(UserModel, username=username)
+        def decorate(*args):
+            (user,) = args
+            response = {'message': f'user {username} deleted', 'user': user.json()}
+            user.delete()
+            return response
+
+        return decorate()
+
     def put(self, username):
-        user = UserModel.find_one(username=username)
         parser = reqparse.RequestParser()
         parser.add_argument('password', type=str)
         parser.add_argument('image', type=str)
         payload = parser.parse_args()
         password = payload.get('password')
         image = payload.get('image')
-        user.password = password if password is not None else user.password
-        user.image = image if image is not None else user.image
-        user.save()
-        return user.json()
+
+        @get_one_or_404(UserModel, username=username)
+        def decorate(*args):
+            (user,) = args
+            user.password = password if password is not None else user.password
+            user.image = image if image is not None else user.image
+            user.save()
+            return user.json()
+
+        return decorate()
 
 
 class AuthResource(Resource):
-    @user_exist
     def post(self):
         payload = _user_parser.parse_args()
         username = payload.get('username')
         password = payload.get('password')
-        user = UserModel.find_one(username=username)
-        if user.password != password:
-            return {'message': f'invalid password'}, 401
-        access_token = create_access_token(identity=user.username, additional_claims=user.json())
-        return {'message': 'login success', 'access_token': access_token}
+
+        @get_one_or_404(UserModel, username=username)
+        def decorate(*args):
+            (user,) = args
+            if user.password != password:
+                return {'message': f'invalid password'}, 401
+            access_token = create_access_token(identity=user.username, additional_claims=user.json())
+            return {'message': 'login success', 'access_token': access_token}
+
+        return decorate()
