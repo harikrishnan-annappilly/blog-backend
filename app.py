@@ -33,11 +33,11 @@ api.add_resource(UsersResource, '/users')
 api.add_resource(UserResource, '/user/<string:username>')
 api.add_resource(AuthResource, '/login')
 api.add_resource(FollowsResource, '/follows')
-api.add_resource(FollowResource, '/follow/<string:username>')
+api.add_resource(FollowResource, '/follow')
 api.add_resource(BlogsResource, '/blogs')
 api.add_resource(BlogResource, '/blog/<int:blog_id>')
 api.add_resource(LikesResource, '/likes')
-api.add_resource(LikeResource, '/like/<string:username>')
+api.add_resource(LikeResource, '/like')
 
 if __name__ == '__main__':
     app.run(debug=True)

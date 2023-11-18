@@ -23,7 +23,6 @@ class UsersResource(Resource):
         user.save()
         return user.json()
 
-    @jwt_required()
     def get(self):
         return [user.json() for user in UserModel.find_all()]
 
@@ -39,8 +38,9 @@ class UserResource(Resource):
 
     @jwt_required()
     def delete(self, username):
-        if get_jwt_identity() not in SUPER_USER:
-            return {'message': f'you are not authorized perform this operation'}, 403
+        logged_username = get_jwt_identity()
+        if logged_username != username and logged_username not in SUPER_USER:
+            return {'message': 'you dont have permission to do this'}, 403
 
         @get_one_or_404(UserModel, username=username)
         def decorate(*args):
@@ -51,7 +51,12 @@ class UserResource(Resource):
 
         return decorate()
 
+    @jwt_required()
     def put(self, username):
+        logged_username = get_jwt_identity()
+        if logged_username != username and logged_username not in SUPER_USER:
+            return {'message': 'you dont have permission to do this'}, 403
+
         parser = reqparse.RequestParser()
         parser.add_argument('password', type=str)
         parser.add_argument('image', type=str)

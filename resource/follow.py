@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from model.follow import FollowModel
 from model.user import UserModel
 from utils.wrappers import get_one_or_404
@@ -13,19 +14,24 @@ class FollowResource(Resource):
     _parser = reqparse.RequestParser()
     _parser.add_argument('username', type=str, required=True)
 
-    def get(self, username):
-        @get_one_or_404(UserModel, username=username)
+    @jwt_required()
+    def get(self):
+        logged_username = get_jwt_identity()
+
+        @get_one_or_404(UserModel, username=logged_username)
         def decorate(*args):
             (user,) = args
             return [follow.followed.username for follow in FollowModel.find_all(follower=user)]
 
         return decorate()
 
-    def post(self, username):
+    @jwt_required()
+    def post(self):
+        logged_username = get_jwt_identity()
         payload = self._parser.parse_args()
         followed_username = payload.get('username')
 
-        @get_one_or_404(UserModel, username=username)
+        @get_one_or_404(UserModel, username=logged_username)
         @get_one_or_404(UserModel, username=followed_username)
         def decorate(*args):
             (follower, followed) = args
@@ -39,17 +45,23 @@ class FollowResource(Resource):
 
         return decorate()
 
-    def delete(self, username):
+    @jwt_required()
+    def delete(self):
+        logged_username = get_jwt_identity()
         payload = self._parser.parse_args()
         followed_username = payload.get('username')
 
-        @get_one_or_404(UserModel, username=username)
+        @get_one_or_404(UserModel, username=logged_username)
         @get_one_or_404(UserModel, username=followed_username)
         def decorate(*args):
             (follower, followed) = args
             follow = FollowModel.find_one(follower=follower, followed=followed)
             if follow is None:
-                return {'message': f'no entry for this'}, 404
+                return {
+                    'message': f'no entry for this',
+                    'follower': logged_username,
+                    'followed': followed_username,
+                }, 404
             response = follow.json()
             follow.delete()
             return response

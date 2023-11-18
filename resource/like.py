@@ -1,4 +1,5 @@
 from flask_restful import Resource, reqparse
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from model.like import LikeModel
 from model.blog import BlogModel
 from model.user import UserModel
@@ -11,13 +12,14 @@ class LikesResource(Resource):
 
 
 class LikeResource(Resource):
-    def put(self, username):
+    @jwt_required()
+    def put(self):
         _parser = reqparse.RequestParser()
         _parser.add_argument('blog_id', type=int, required=True)
         payload = _parser.parse_args()
         blog_id = payload.get('blog_id')
 
-        @get_one_or_404(UserModel, username=username)
+        @get_one_or_404(UserModel, username=get_jwt_identity())
         @get_one_or_404(BlogModel, id=blog_id)
         def decorate(*args):
             (user, blog) = args
@@ -32,8 +34,9 @@ class LikeResource(Resource):
 
         return decorate()
 
-    def get(self, username):
-        @get_one_or_404(UserModel, username=username)
+    @jwt_required()
+    def get(self):
+        @get_one_or_404(UserModel, username=get_jwt_identity())
         def decorate(*args):
             (user,) = args
             return [like.id for like in LikeModel.find_all(user=user) if like.liked]
