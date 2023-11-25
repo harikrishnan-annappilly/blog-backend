@@ -3,8 +3,8 @@ from .base import BaseModel
 
 
 class FollowModel(BaseModel):
-    follower_id = db.Column(db.String, db.ForeignKey('user_model.username'), nullable=False)
-    followed_id = db.Column(db.String, db.ForeignKey('user_model.username'), nullable=False)
+    follower_id = db.Column(db.String(255), db.ForeignKey('user_model.username'), nullable=False)
+    followed_id = db.Column(db.String(255), db.ForeignKey('user_model.username'), nullable=False)
 
     def json(self):
         return {

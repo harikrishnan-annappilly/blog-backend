@@ -3,9 +3,9 @@ from .base import BaseModel
 
 
 class UserModel(BaseModel):
-    username = db.Column(db.String, nullable=False, unique=True)
-    password = db.Column(db.String, nullable=False)
-    image = db.Column(db.String, default='NA')
+    username = db.Column(db.String(255), nullable=False, unique=True)
+    password = db.Column(db.String(255), nullable=False)
+    image = db.Column(db.String(255), default='NA')
     follows = db.relationship(
         'FollowModel',
         foreign_keys='FollowModel.follower_id',

@@ -3,7 +3,7 @@ from .base import BaseModel
 
 
 class LikeModel(BaseModel):
-    username = db.Column(db.String, db.ForeignKey('user_model.username'), nullable=False)
+    username = db.Column(db.String(255), db.ForeignKey('user_model.username'), nullable=False)
     blog_id = db.Column(db.Integer, db.ForeignKey('blog_model.id'), nullable=False)
     liked = db.Column(db.Boolean, nullable=False)
 

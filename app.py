@@ -40,4 +40,4 @@ api.add_resource(LikesResource, '/likes')
 api.add_resource(LikeResource, '/like')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
