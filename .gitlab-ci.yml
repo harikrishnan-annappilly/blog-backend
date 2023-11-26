@@ -29,6 +29,9 @@ docker build:
     stage: build
     before_script:
         - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
+        - export TZ="Asia/Kolkata"
+        - now=$(date "+%Y-%m-%d %H:%M:%S %Z")
+        - sed -i "s|%date%|$now|g" ./templates/home.html
     script:
         - docker compose --env-file $DOCKER_ENV_FILE build
         - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
