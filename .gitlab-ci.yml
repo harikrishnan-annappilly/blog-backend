@@ -8,7 +8,7 @@ stages:
     - build
     - deploy
 
-.variable checking:
+variable checking:
     stage: checks
     script:
         - |
@@ -28,9 +28,9 @@ stages:
 deployment date:
     stage: checks
     script:
-        - export TZ="Asia/Kolkata" || true
-        - now=$(date "+%Y-%m-%d %H:%M:%S %Z") || true
-        - sed -i "s|%date%|$now|g" templates/home.html || true
+        - export TZ="Asia/Kolkata"
+        - now=$(date "+%Y-%m-%d %H:%M:%S %Z")
+        - sed -i "s|%date%|$now|g" templates/home.html
     artifacts:
         paths:
             - templates/
