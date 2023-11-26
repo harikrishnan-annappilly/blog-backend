@@ -9,16 +9,19 @@ stages:
 
 docker build:
     stage: build
+    before_script:
+        - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
     script:
         - docker compose build
         - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
         - docker compose push
+    after_script:
+        - rm $DOCKER_ENV_FILE
 
 deploy to EC2:
     stage: deploy
     before_script:
         - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
-        - apt update && apt install -y openssh-server
         - echo "$EC2_PEM_KEY" > ec2.pem
         - chmod 400 ec2.pem
     script:
