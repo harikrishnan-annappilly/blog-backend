@@ -27,9 +27,11 @@ variable checking:
 
 deployment date:
     stage: checks
+    before_script:
+        - apk add --no-cache tzdata
     script:
-        - export TZ="Asia/Kolkata"
-        - now=$(date "+%Y-%m-%d %H:%M:%S %Z")
+        - export TZ=Asia/Kolkata
+        - now=$(date "+%Y-%m-%d %I:%M %p %Z")
         - sed -i "s|%date%|$now|g" templates/home.html
     artifacts:
         paths:
