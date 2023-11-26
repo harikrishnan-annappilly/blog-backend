@@ -8,7 +8,7 @@ stages:
     - build
     - deploy
 
-variable checking:
+.variable checking:
     stage: checks
     script:
         - |
@@ -25,21 +25,29 @@ variable checking:
         - check_variable "$DOCKER_REPO"
         - check_variable "$DOCKER_ENV_FILE"
 
+deployment date:
+    stage: checks
+    script:
+        - export TZ="Asia/Kolkata" || true
+        - now=$(date "+%Y-%m-%d %H:%M:%S %Z") || true
+        - sed -i "s|%date%|$now|g" templates/home.html || true
+    artifacts:
+        paths:
+            - templates/
+    allow_failure: true
+
 docker build:
     stage: build
     before_script:
-        - ls
-        - pwd
         - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
-        - export TZ="Asia/Kolkata" || true
-        - now=$(date "+%Y-%m-%d %H:%M:%S %Z") || true
-        - sed -i "s|%date%|$now|g" ./templates/home.html || true
     script:
         - docker compose --env-file $DOCKER_ENV_FILE build
         - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
         - docker compose --env-file $DOCKER_ENV_FILE push
     after_script:
         - rm $DOCKER_ENV_FILE
+    dependencies:
+        - deployment date
 
 deploy to EC2:
     stage: deploy
