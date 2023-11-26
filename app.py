@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from db import db
@@ -26,7 +26,7 @@ def create_tables():
 
 @app.route('/')
 def index():
-    return '<h1>This is running...</h1>'
+    return render_template('home.html')
 
 
 api.add_resource(UsersResource, '/users')
