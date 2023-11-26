@@ -1,0 +1,33 @@
+services:
+    - docker:dind
+
+stages:
+    - build
+    - deploy
+
+docker build:
+    image: docker:stable
+    stage: build
+    script:
+        - docker compose build
+        - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
+        - docker compose push
+
+deploy to EC2:
+    stage: deploy
+    image: ubuntu:latest
+    before_script:
+        - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
+        - apt update && apt install -y openssh-server
+        - echo "$EC2_PEM_KEY" > ec2.pem
+        - chmod 400 ec2.pem
+    script:
+        - scp -i ec2.pem -o StrictHostKeyChecking=no ./docker-compose.yml admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com:~/
+        - scp -i ec2.pem -o StrictHostKeyChecking=no ./$DOCKER_ENV_FILE admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com:~/
+        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "sudo docker compose --env-file "$DOCKER_ENV_FILE" down"
+        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "sudo docker compose --env-file "$DOCKER_ENV_FILE" up -d"
+        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "rm ~/docker-compose.yml"
+        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "rm ~/"$DOCKER_ENV_FILE""
+    after_script:
+        - rm ec2.pem
+        - rm $DOCKER_ENV_FILE
