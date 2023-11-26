@@ -1,12 +1,13 @@
 services:
     - docker:dind
 
+image: harikrishnanas/docker-compose-with-ssh
+
 stages:
     - build
     - deploy
 
 docker build:
-    image: docker:stable
     stage: build
     script:
         - docker compose build
@@ -15,7 +16,6 @@ docker build:
 
 deploy to EC2:
     stage: deploy
-    image: ubuntu:latest
     before_script:
         - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
         - apt update && apt install -y openssh-server
