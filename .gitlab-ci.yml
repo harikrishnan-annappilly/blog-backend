@@ -12,9 +12,9 @@ docker build:
     before_script:
         - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
     script:
-        - docker compose build
+        - docker compose --env-file $DOCKER_ENV_FILE build
         - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
-        - docker compose push
+        - docker compose --env-file $DOCKER_ENV_FILE push
     after_script:
         - rm $DOCKER_ENV_FILE
 
