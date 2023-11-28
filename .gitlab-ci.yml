@@ -19,11 +19,11 @@ variable checking:
               fi
             }
 
-        - check_variable "$EC2_PEM_KEY"
+        - check_variable "$SERVER_RUN"
+        - check_variable "$SERVER_COPY"
+        - check_variable "$SERVER_PATH"
         - check_variable "$DOCKER_USERNAME"
         - check_variable "$DOCKER_ACCESS_TOKEN"
-        - check_variable "$DOCKER_REPO"
-        - check_variable "$DOCKER_ENV_FILE"
 
 deployment date:
     stage: checks
@@ -40,31 +40,20 @@ deployment date:
 
 docker build:
     stage: build
-    before_script:
-        - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
     script:
-        - docker compose --env-file $DOCKER_ENV_FILE build
+        - docker compose build
         - echo $DOCKER_ACCESS_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
-        - docker compose --env-file $DOCKER_ENV_FILE push
-    after_script:
-        - rm $DOCKER_ENV_FILE
+        - docker compose push
     dependencies:
         - deployment date
 
 deploy to EC2:
     stage: deploy
     before_script:
-        - echo "DOCKER_REPO="$DOCKER_REPO > $DOCKER_ENV_FILE
-        - echo "$EC2_PEM_KEY" > ec2.pem
-        - chmod 400 ec2.pem
+        - chmod 400 $SERVER_KEY
     script:
-        - scp -i ec2.pem -o StrictHostKeyChecking=no ./docker-compose.yml admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com:~/
-        - scp -i ec2.pem -o StrictHostKeyChecking=no ./$DOCKER_ENV_FILE admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com:~/
-        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "sudo docker compose --env-file "$DOCKER_ENV_FILE" down"
-        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "sudo docker compose --env-file "$DOCKER_ENV_FILE" pull"
-        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "sudo docker compose --env-file "$DOCKER_ENV_FILE" up -d"
-        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "rm ~/docker-compose.yml"
-        - ssh -i ec2.pem -o StrictHostKeyChecking=no admin@ec2-13-233-246-76.ap-south-1.compute.amazonaws.com "rm ~/"$DOCKER_ENV_FILE""
-    after_script:
-        - rm ec2.pem
-        - rm $DOCKER_ENV_FILE
+        - $SERVER_COPY ./docker-compose.yml $SERVER_PATH
+        - $SERVER_RUN "sudo docker compose down"
+        - $SERVER_RUN "sudo docker compose pull"
+        - $SERVER_RUN "sudo docker compose up -d"
+        - $SERVER_RUN "rm ~/docker-compose.yml"
