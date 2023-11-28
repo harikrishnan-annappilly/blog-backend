@@ -3,6 +3,6 @@ version: "3"
 services:
     flask-app:
         build: .
-        image: harikrishnanas/flask-blog-backend
+        image: harikrishnanas/blog-backend
         ports:
             - "5000:5000"
